@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "../Link.jsx";
+import { Link, navigate } from "../Link.jsx";
 import { Icon } from "../Icon.jsx";
 import { useInquiryCart } from "../../lib/inquiryStore.js";
 
@@ -15,6 +15,8 @@ export function Header() {
   const count = cart.reduce((total, item) => total + item.quantity, 0);
   const [theme, setTheme] = useState(getPreferredTheme);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [showAddedNotice, setShowAddedNotice] = useState(false);
   const previousCount = useRef(count);
 
@@ -42,6 +44,15 @@ export function Header() {
     { to: "/about", label: "About" },
     { to: "/contact", label: "Contact" },
   ];
+  const submitSearch = (event) => {
+    event.preventDefault();
+    const query = searchQuery.trim();
+
+    if (!query) return;
+    setSearchOpen(false);
+    setMenuOpen(false);
+    navigate("/catalog", { category: "all", q: query });
+  };
 
   return (
     <>
@@ -70,10 +81,10 @@ export function Header() {
               className="h-10 w-10 flex-shrink-0 rounded-sm object-contain sm:h-12 sm:w-12"
             />
             <div className="min-w-0 leading-tight">
-              <div className="truncate text-sm font-bold tracking-tight sm:text-base">
+              <div className="truncate text-[13px] font-bold tracking-tight min-[380px]:text-sm sm:text-base">
                 Shree Annapoorneshwari
               </div>
-              <div className="hidden text-[11px] uppercase tracking-widest text-muted-foreground sm:block">
+              <div className="truncate text-[9px] uppercase tracking-widest text-muted-foreground min-[380px]:text-[10px] sm:text-[11px]">
                 Packaging Supply Co.
               </div>
             </div>
@@ -88,7 +99,23 @@ export function Header() {
           <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-2">
             <button
               type="button"
-              onClick={() => setMenuOpen((open) => !open)}
+              onClick={() => {
+                setSearchOpen((open) => !open);
+                setMenuOpen(false);
+              }}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-sm border bg-card text-foreground transition hover:border-safety hover:text-safety sm:h-10 sm:w-10 md:hidden"
+              aria-expanded={searchOpen}
+              aria-label="Search products"
+              title="Search"
+            >
+              <Icon name={searchOpen ? "x" : "search"} className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen((open) => !open);
+                setSearchOpen(false);
+              }}
               className="relative inline-flex h-9 w-9 items-center justify-center rounded-sm border bg-card text-foreground transition hover:border-safety hover:text-safety sm:h-10 sm:w-10 md:hidden"
               aria-expanded={menuOpen}
               aria-label="Toggle navigation menu"
@@ -132,6 +159,31 @@ export function Header() {
             </Link>
           </div>
         </div>
+        {searchOpen && (
+          <form onSubmit={submitSearch} className="border-t bg-background px-4 py-3 md:hidden">
+            <div className="container mx-auto flex gap-2">
+              <div className="relative flex-1">
+                <Icon
+                  name="search"
+                  className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                />
+                <input
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search products..."
+                  className="w-full rounded-sm border bg-card py-2.5 pl-10 pr-3 text-sm outline-none focus:border-safety"
+                  autoFocus
+                />
+              </div>
+              <button
+                type="submit"
+                className="rounded-sm bg-safety px-4 text-sm font-bold uppercase tracking-wider text-safety-foreground"
+              >
+                Go
+              </button>
+            </div>
+          </form>
+        )}
         {showAddedNotice && (
           <div className="pointer-events-none fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-sm bg-steel px-4 py-2 text-xs font-semibold text-steel-foreground shadow-lg">
             Added to quote
