@@ -89,12 +89,18 @@ export function Header() {
             <button
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-sm border bg-card text-foreground transition hover:border-safety hover:text-safety sm:h-10 sm:w-10 md:hidden"
+              className="relative inline-flex h-9 w-9 items-center justify-center rounded-sm border bg-card text-foreground transition hover:border-safety hover:text-safety sm:h-10 sm:w-10 md:hidden"
               aria-expanded={menuOpen}
               aria-label="Toggle navigation menu"
               title="Menu"
             >
               <Icon name={menuOpen ? "x" : "menu"} className="h-4 w-4" />
+              {count > 0 && (
+                <span
+                  className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-safety ring-2 ring-background"
+                  aria-hidden="true"
+                />
+              )}
             </button>
             <button
               type="button"
@@ -127,7 +133,7 @@ export function Header() {
           </div>
         </div>
         {showAddedNotice && (
-          <div className="pointer-events-none absolute right-3 top-full mt-2 rounded-sm border bg-card px-3 py-2 text-xs font-semibold text-foreground shadow-lg">
+          <div className="pointer-events-none fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-sm bg-steel px-4 py-2 text-xs font-semibold text-steel-foreground shadow-lg">
             Added to quote
           </div>
         )}
