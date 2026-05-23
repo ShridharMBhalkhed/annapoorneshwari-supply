@@ -69,19 +69,22 @@ export function Header() {
               <Icon name="mail" className="h-3 w-3" /> s.annapoorneshwarienterprises@gmail.com
             </a>
           </div>
-          <span className="text-white/70">GSTIN: 29AFJPH2849Q1ZN</span>
+          <span className="mobile-hidden text-white/70">GSTIN: 29AFJPH2849Q1ZN</span>
         </div>
       </div>
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur relative">
-        <div className="container mx-auto flex items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
-          <Link to="/" className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 md:flex-none">
+        <div className="mobile-header-row container mx-auto flex items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
+          <Link
+            to="/"
+            className="mobile-header-brand flex min-w-0 flex-1 items-center gap-2 overflow-hidden sm:gap-3 md:flex-none"
+          >
             <img
               src="/logo-removebg-preview.png"
               alt="Shree Annapoorneshwari logo"
-              className="h-10 w-10 flex-shrink-0 rounded-sm object-contain sm:h-12 sm:w-12"
+              className="h-9 w-9 flex-shrink-0 rounded-sm object-contain sm:h-12 sm:w-12"
             />
             <div className="min-w-0 leading-tight">
-              <div className="truncate text-[13px] font-bold tracking-tight min-[380px]:text-sm sm:text-base">
+              <div className="truncate text-[12px] font-bold tracking-tight min-[380px]:text-sm sm:text-base">
                 Shree Annapoorneshwari
               </div>
               <div className="truncate text-[9px] uppercase tracking-widest text-muted-foreground min-[380px]:text-[10px] sm:text-[11px]">
@@ -96,7 +99,7 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-2">
+          <div className="mobile-header-actions flex w-[78px] flex-shrink-0 items-center justify-end gap-1.5 sm:w-auto sm:gap-2">
             <button
               type="button"
               onClick={() => {
