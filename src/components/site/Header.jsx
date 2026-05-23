@@ -69,14 +69,14 @@ export function Header() {
               <Icon name="mail" className="h-3 w-3" /> s.annapoorneshwarienterprises@gmail.com
             </a>
           </div>
-          <span className="mobile-hidden text-white/70">GSTIN: 29AFJPH2849Q1ZN</span>
+          <span className="hidden text-white/70 min-[430px]:inline">GSTIN: 29AFJPH2849Q1ZN</span>
         </div>
       </div>
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur relative">
-        <div className="mobile-header-row container mx-auto flex items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
+        <div className="container mx-auto flex items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
           <Link
             to="/"
-            className="mobile-header-brand flex min-w-0 flex-1 items-center gap-2 overflow-hidden sm:gap-3 md:flex-none"
+            className="flex min-w-0 max-w-[calc(100vw-112px)] flex-1 items-center gap-2 overflow-hidden sm:max-w-none sm:gap-3 md:flex-none"
           >
             <img
               src="/logo-removebg-preview.png"
@@ -99,7 +99,7 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          <div className="mobile-header-actions flex w-[78px] flex-shrink-0 items-center justify-end gap-1.5 sm:w-auto sm:gap-2">
+          <div className="flex w-[78px] flex-shrink-0 items-center justify-end gap-1.5 sm:w-auto sm:gap-2">
             <button
               type="button"
               onClick={() => {

@@ -114,42 +114,6 @@
 }
 
 @layer components {
-  .mobile-header-row {
-    position: relative;
-  }
-
-  .mobile-header-brand {
-    padding-right: 88px;
-  }
-
-  .mobile-header-actions {
-    position: absolute;
-    right: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  @media (min-width: 768px) {
-    .mobile-header-row {
-      position: static;
-    }
-
-    .mobile-header-brand {
-      padding-right: 0;
-    }
-
-    .mobile-header-actions {
-      position: static;
-      transform: none;
-    }
-  }
-
-  @media (max-width: 429px) {
-    .mobile-hidden {
-      display: none;
-    }
-  }
-
   .brand-hero,
   .brand-panel {
     background:
