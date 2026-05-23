@@ -587,20 +587,6 @@ function ProductPage({ slug }) {
               >
                 Request Quote
               </Link>
-              {added && (
-                <div
-                  className="quote-snackbar hidden rounded-lg bg-steel px-4 py-2.5 text-left text-steel-foreground shadow-xl shadow-black/20 md:block"
-                  role="status"
-                  aria-live="polite"
-                >
-                  <div className="text-xs font-bold uppercase leading-tight text-safety">
-                    ADDED TO QUOTE
-                  </div>
-                  <div className="mt-0.5 text-[11px] leading-tight text-white/75">
-                    Review it anytime in Request Quote.
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="mt-6 rounded-sm border bg-secondary/40 p-4 text-sm">
@@ -625,25 +611,45 @@ function ProductPage({ slug }) {
             <h2 className="border-b-2 border-steel pb-3 text-xl font-bold">Related Products</h2>
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {related.map((item) => (
-                <Link
+                <div
                   key={item.id}
-                  to={`/product/${item.slug}`}
-                  className="group rounded-sm border bg-card hover:border-safety"
+                  className="group flex flex-col rounded-sm border bg-card hover:border-safety"
                 >
-                  <ProductImage
-                    name={item.name}
-                    url={item.image_url}
-                    className="aspect-square w-full bg-white object-contain p-4"
-                  />
-                  <div className="border-t p-3">
-                    <div className="text-sm font-bold group-hover:text-safety">{item.name}</div>
+                  <Link to={`/product/${item.slug}`} className="block">
+                    <ProductImage
+                      name={item.name}
+                      url={item.image_url}
+                      className="aspect-square w-full bg-white object-contain p-4"
+                    />
+                  </Link>
+                  <div className="flex flex-1 flex-col border-t p-3">
+                    <Link
+                      to={`/product/${item.slug}`}
+                      className="text-sm font-bold hover:text-safety"
+                    >
+                      {item.name}
+                    </Link>
                     {item.short_description && (
                       <div className="mt-1 line-clamp-2 text-xs leading-snug text-muted-foreground">
                         {item.short_description}
                       </div>
                     )}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        inquiryStore.add({
+                          productId: item.id,
+                          slug: item.slug,
+                          name: item.name,
+                          imageUrl: item.image_url,
+                        })
+                      }
+                      className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-sm bg-steel py-2 text-xs font-bold uppercase tracking-wider text-steel-foreground hover:bg-safety hover:text-safety-foreground"
+                    >
+                      <Icon name="plus" className="h-3.5 w-3.5" /> Add to Quote
+                    </button>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           </div>

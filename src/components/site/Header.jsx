@@ -236,7 +236,7 @@ export function Header() {
       </header>
       {showAddedNotice && (
         <div
-          className="quote-snackbar pointer-events-none fixed inset-x-3 bottom-5 top-auto z-50 rounded-lg bg-steel px-4 py-2.5 text-center text-steel-foreground shadow-xl shadow-black/20 md:hidden"
+          className="quote-snackbar pointer-events-none fixed inset-x-3 bottom-5 top-auto z-50 rounded-lg bg-steel px-4 py-2.5 text-center text-steel-foreground shadow-xl shadow-black/20 md:inset-x-8 lg:inset-x-12"
           role="status"
           aria-live="polite"
         >
