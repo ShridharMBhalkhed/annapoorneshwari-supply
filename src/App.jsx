@@ -551,7 +551,7 @@ function ProductPage({ slug }) {
               </button>
               <Link
                 to="/inquiry"
-                className="inline-flex items-center gap-2 rounded-sm border-2 border-steel px-5 py-3 text-sm font-bold uppercase tracking-wider text-steel hover:bg-steel hover:text-steel-foreground"
+                className="inline-flex items-center gap-2 rounded-sm border-2 border-steel bg-white px-5 py-3 text-sm font-bold uppercase tracking-wider text-black hover:bg-steel hover:text-steel-foreground dark:border-white dark:bg-white dark:text-black dark:hover:bg-safety dark:hover:text-safety-foreground"
               >
                 Request Quote
               </Link>
