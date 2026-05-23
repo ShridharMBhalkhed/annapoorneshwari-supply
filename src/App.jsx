@@ -44,8 +44,9 @@ function createWhatsAppInquiryMessage(inquiry) {
   const customerLines = [
     `Name: ${inquiry.name}`,
     `Email: ${inquiry.email}`,
-    inquiry.phone ? `Phone: ${inquiry.phone}` : null,
+    `Mobile: ${inquiry.phone}`,
     inquiry.company ? `Company: ${inquiry.company}` : null,
+    inquiry.address ? `Address: ${inquiry.address}` : null,
   ].filter(Boolean);
 
   const itemLines = inquiry.items.map((item, index) => {
@@ -815,13 +816,20 @@ function ContactPage() {
 function InquiryPage() {
   useDocumentTitle("Request a Quote - Shree Annapoorneshwari Packaging");
   const cart = useInquiryCart();
-  const [form, setForm] = useState({ name: "", email: "", phone: "", company: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    address: "",
+    message: "",
+  });
   const [submitted, setSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
   const onSubmit = (event) => {
     event.preventDefault();
-    if (cart.length === 0 || !form.name || !form.email) return;
+    if (cart.length === 0 || !form.name || !form.email || !form.phone) return;
 
     setIsSending(true);
     const inquiry = {
@@ -978,9 +986,10 @@ function InquiryPage() {
                   required
                 />
                 <Field
-                  label="Phone"
+                  label="Mobile Number *"
                   value={form.phone}
                   onChange={(value) => setForm({ ...form, phone: value })}
+                  required
                 />
                 <Field
                   label="Company"
@@ -989,7 +998,19 @@ function InquiryPage() {
                 />
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Message
+                    Address
+                  </label>
+                  <textarea
+                    value={form.address}
+                    onChange={(event) => setForm({ ...form, address: event.target.value })}
+                    rows={3}
+                    placeholder="Delivery address / city / pincode"
+                    className="mt-1 w-full rounded-sm border px-3 py-2 text-sm outline-none focus:border-safety"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Message (optional)
                   </label>
                   <textarea
                     value={form.message}
@@ -1002,7 +1023,7 @@ function InquiryPage() {
               </div>
               <button
                 type="submit"
-                disabled={isSending || cart.length === 0 || !form.name || !form.email}
+                disabled={isSending || cart.length === 0 || !form.name || !form.email || !form.phone}
                 className="mt-5 w-full rounded-sm bg-safety py-3 text-sm font-bold uppercase tracking-wider text-safety-foreground disabled:opacity-40"
               >
                 {isSending ? "Sending..." : "Submit Inquiry"}
