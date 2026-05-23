@@ -66,7 +66,7 @@ function HomePage() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="relative overflow-hidden bg-steel text-steel-foreground">
+        <section className="brand-hero relative overflow-hidden bg-steel text-steel-foreground">
           <div className="absolute inset-0">
             {heroSlides.map((imageUrl, index) => (
               <img
@@ -238,7 +238,7 @@ function HomePage() {
         </section>
 
         <section className="container mx-auto px-4 py-20">
-          <div className="relative overflow-visible rounded-sm bg-steel px-8 py-10 text-steel-foreground md:min-h-[300px] md:px-12 md:py-12 md:pr-[340px] lg:pr-[400px]">
+          <div className="brand-panel relative overflow-visible rounded-sm bg-steel px-8 py-10 text-steel-foreground md:min-h-[300px] md:px-12 md:py-12 md:pr-[340px] lg:pr-[400px]">
             <div className="absolute right-0 top-0 hidden h-full w-1/3 md:block" />
             <img
               src="/WhatsApp_Image_2026-05-24_at_00.09.44-removebg-preview.png"
