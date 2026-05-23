@@ -635,8 +635,13 @@ function ProductPage({ slug }) {
                     url={item.image_url}
                     className="aspect-square w-full bg-white object-contain p-4"
                   />
-                  <div className="border-t p-3 text-sm font-bold group-hover:text-safety">
-                    {item.name}
+                  <div className="border-t p-3">
+                    <div className="text-sm font-bold group-hover:text-safety">{item.name}</div>
+                    {item.short_description && (
+                      <div className="mt-1 line-clamp-2 text-xs leading-snug text-muted-foreground">
+                        {item.short_description}
+                      </div>
+                    )}
                   </div>
                 </Link>
               ))}
