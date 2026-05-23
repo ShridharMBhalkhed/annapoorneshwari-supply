@@ -574,7 +574,7 @@ function ProductPage({ slug }) {
                     imageUrl: product.image_url,
                   });
                   setAdded(true);
-                  window.setTimeout(() => setAdded(false), 1500);
+                  window.setTimeout(() => setAdded(false), 2800);
                 }}
                 className="inline-flex items-center gap-2 rounded-sm bg-safety px-5 py-3 text-sm font-bold uppercase tracking-wider text-safety-foreground hover:opacity-90"
               >
@@ -587,6 +587,20 @@ function ProductPage({ slug }) {
               >
                 Request Quote
               </Link>
+              {added && (
+                <div
+                  className="quote-snackbar hidden rounded-lg bg-steel px-4 py-2.5 text-left text-steel-foreground shadow-xl shadow-black/20 md:block"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <div className="text-xs font-bold uppercase leading-tight text-safety">
+                    ADDED TO QUOTE
+                  </div>
+                  <div className="mt-0.5 text-[11px] leading-tight text-white/75">
+                    Review it anytime in Request Quote.
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mt-6 rounded-sm border bg-secondary/40 p-4 text-sm">

@@ -181,20 +181,6 @@ export function Header() {
             </div>
           </form>
         )}
-        {showAddedNotice && (
-          <div
-            className="quote-snackbar pointer-events-none fixed inset-x-3 bottom-3 z-50 rounded-lg bg-steel px-4 py-2.5 text-center text-steel-foreground shadow-xl shadow-black/20 sm:left-1/2 sm:right-auto sm:w-[420px] sm:-translate-x-1/2"
-            role="status"
-            aria-live="polite"
-          >
-            <div className="text-xs font-bold uppercase leading-tight text-safety">
-              ADDED TO QUOTE
-            </div>
-            <div className="mt-0.5 text-[11px] leading-tight text-white/75">
-              Review it anytime in Request Quote.
-            </div>
-          </div>
-        )}
         {menuOpen && (
           <div className="border-t bg-background px-4 py-3 md:hidden">
             <div className="container mx-auto grid gap-3 text-sm font-semibold">
@@ -248,6 +234,20 @@ export function Header() {
           </div>
         )}
       </header>
+      {showAddedNotice && (
+        <div
+          className="quote-snackbar pointer-events-none fixed inset-x-3 bottom-5 top-auto z-50 rounded-lg bg-steel px-4 py-2.5 text-center text-steel-foreground shadow-xl shadow-black/20 md:hidden"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="text-xs font-bold uppercase leading-tight text-safety">
+            ADDED TO QUOTE
+          </div>
+          <div className="mt-0.5 text-[11px] leading-tight text-white/75">
+            Review it anytime in Request Quote.
+          </div>
+        </div>
+      )}
     </>
   );
 }
