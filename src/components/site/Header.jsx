@@ -29,7 +29,7 @@ export function Header() {
   useEffect(() => {
     if (count > previousCount.current) {
       setShowAddedNotice(true);
-      const timer = window.setTimeout(() => setShowAddedNotice(false), 1800);
+      const timer = window.setTimeout(() => setShowAddedNotice(false), 2800);
       previousCount.current = count;
       return () => window.clearTimeout(timer);
     }
@@ -183,13 +183,15 @@ export function Header() {
         )}
         {showAddedNotice && (
           <div
-            className="pointer-events-none fixed inset-x-0 bottom-0 z-50 bg-steel px-4 py-2 text-center text-steel-foreground shadow-lg"
+            className="quote-snackbar pointer-events-none fixed inset-x-3 bottom-3 z-50 rounded-lg bg-steel px-4 py-2.5 text-center text-steel-foreground shadow-xl shadow-black/20 sm:left-1/2 sm:right-auto sm:w-[420px] sm:-translate-x-1/2"
             role="status"
             aria-live="polite"
           >
-            <div className="text-xs font-bold uppercase leading-tight">ADDED TO QUOTE</div>
+            <div className="text-xs font-bold uppercase leading-tight text-safety">
+              ADDED TO QUOTE
+            </div>
             <div className="mt-0.5 text-[11px] leading-tight text-white/75">
-              You can checkout in the Request Quote
+              Review it anytime in Request Quote.
             </div>
           </div>
         )}
