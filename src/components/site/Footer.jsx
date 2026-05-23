@@ -57,7 +57,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10 py-4 text-center text-xs text-white/60">
-        Copyright {new Date().getFullYear()} Shree Annapoorneshwari Packaging. GSTIN:
+        © Copyright {new Date().getFullYear()} Shree Annapoorneshwari Packaging. GSTIN:
         29AFJPH2849Q1ZN
       </div>
     </footer>

@@ -128,7 +128,7 @@ export const products = [
       Width: "500 mm",
       Micron: "23, 25, 30",
     },
-    image_url: "https://tiimg.tistatic.com/fp/1/007/473/18-inches-transparent-stretch-film-roll-for-packaging-purpose-52-microns-thickness-602.jpg",
+    image_url: "https://5.imimg.com/data5/SELLER/Default/2020/12/QV/YS/VY/101355692/lldpe-stretch-film-500x500.jpeg",
     featured: true,
   },
   {
