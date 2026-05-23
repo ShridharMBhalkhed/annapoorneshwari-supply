@@ -57,19 +57,13 @@ export function Header() {
   return (
     <>
       <div className="bg-steel text-steel-foreground text-xs">
-        <div className="container mx-auto flex flex-wrap items-center justify-between gap-2 px-4 py-2">
-          <div className="flex items-center gap-4">
-            <a href="tel:+919945662206" className="flex items-center gap-1.5 hover:text-safety">
-              <Icon name="phone" className="h-3 w-3" /> +91 99456 62206
-            </a>
-            <a
-              href="mailto:s.annapoorneshwarienterprises@gmail.com"
-              className="hidden items-center gap-1.5 hover:text-safety sm:flex"
-            >
-              <Icon name="mail" className="h-3 w-3" /> s.annapoorneshwarienterprises@gmail.com
-            </a>
-          </div>
-          <span className="hidden text-white/70 min-[430px]:inline">GSTIN: 29AFJPH2849Q1ZN</span>
+        <div className="container mx-auto flex items-center justify-between gap-3 px-4 py-2">
+          <a href="tel:+919945662206" className="flex items-center gap-1.5 hover:text-safety">
+            <Icon name="phone" className="h-3 w-3" /> +91 99456 62206
+          </a>
+          <span className="shrink-0 text-right text-[10px] text-white/70 min-[380px]:text-xs">
+            GSTIN: 29AFJPH2849Q1ZN
+          </span>
         </div>
       </div>
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur relative">
@@ -188,8 +182,15 @@ export function Header() {
           </form>
         )}
         {showAddedNotice && (
-          <div className="pointer-events-none fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-sm bg-steel px-4 py-2 text-xs font-semibold text-steel-foreground shadow-lg">
-            Added to quote
+          <div
+            className="pointer-events-none fixed inset-x-0 bottom-0 z-50 bg-steel px-4 py-2 text-center text-steel-foreground shadow-lg"
+            role="status"
+            aria-live="polite"
+          >
+            <div className="text-xs font-bold uppercase leading-tight">ADDED TO QUOTE</div>
+            <div className="mt-0.5 text-[11px] leading-tight text-white/75">
+              You can checkout in the Request Quote
+            </div>
           </div>
         )}
         {menuOpen && (
