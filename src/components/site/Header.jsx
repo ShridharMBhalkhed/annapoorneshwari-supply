@@ -14,6 +14,7 @@ export function Header() {
   const cart = useInquiryCart();
   const count = cart.reduce((total, item) => total + item.quantity, 0);
   const [theme, setTheme] = useState(getPreferredTheme);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -22,6 +23,12 @@ export function Header() {
   }, [theme]);
 
   const nextTheme = theme === "dark" ? "light" : "dark";
+  const navItems = [
+    { to: "/", label: "Home" },
+    { to: "/catalog", label: "Catalog" },
+    { to: "/about", label: "About" },
+    { to: "/contact", label: "Contact" },
+  ];
 
   return (
     <>
@@ -57,12 +64,23 @@ export function Header() {
             </div>
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            <Link to="/" className="hover:text-safety">Home</Link>
-            <Link to="/catalog" className="hover:text-safety">Catalog</Link>
-            <Link to="/about" className="hover:text-safety">About</Link>
-            <Link to="/contact" className="hover:text-safety">Contact</Link>
+            {navItems.map((item) => (
+              <Link key={item.to} to={item.to} className="hover:text-safety">
+                {item.label}
+              </Link>
+            ))}
           </nav>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setMenuOpen((open) => !open)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-sm border bg-card text-foreground transition hover:border-safety hover:text-safety md:hidden"
+              aria-expanded={menuOpen}
+              aria-label="Toggle navigation menu"
+              title="Menu"
+            >
+              <Icon name={menuOpen ? "x" : "menu"} className="h-4 w-4" />
+            </button>
             <button
               type="button"
               onClick={() => setTheme(nextTheme)}
@@ -86,6 +104,22 @@ export function Header() {
             </Link>
           </div>
         </div>
+        {menuOpen && (
+          <nav className="border-t bg-background px-4 py-3 md:hidden">
+            <div className="container mx-auto grid gap-1 text-sm font-semibold">
+              {navItems.map((item) => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-sm px-3 py-2 hover:bg-secondary hover:text-safety"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
+        )}
       </header>
     </>
   );

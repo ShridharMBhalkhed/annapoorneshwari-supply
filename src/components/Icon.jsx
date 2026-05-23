@@ -59,6 +59,13 @@ const icons = {
       <circle cx="12" cy="10" r="3" />
     </>
   ),
+  menu: (
+    <>
+      <path d="M4 6h16" />
+      <path d="M4 12h16" />
+      <path d="M4 18h16" />
+    </>
+  ),
   moon: (
     <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z" />
   ),

@@ -9,12 +9,12 @@ import { inquiryStore, useInquiryCart } from "./lib/inquiryStore.js";
 
 const catalog = getCatalog();
 const heroSlides = [
-  "/images/WhatsApp Image 2026-05-23 at 20.53.03.jpeg",
-  "/images/WhatsApp Image 2026-05-24 at 00.09.44.jpeg",
-  "/images/WhatsApp Image 2026-05-24 at 00.09.45.jpeg",
-  "/images/WhatsApp Image 2026-05-24 at 00.09.51.jpeg",
-  "/images/WhatsApp Image 2026-05-24 at 00.09.53.jpeg",
-  "/images/WhatsApp Image 2026-05-24 at 00.09.55.jpeg",
+  "/images/packaging-supplies-hero-1.jpeg",
+  "/images/packaging-supplies-hero-2.jpeg",
+  "/images/packaging-supplies-hero-3.jpeg",
+  "/images/packaging-supplies-hero-4.jpeg",
+  "/images/packaging-supplies-hero-5.jpeg",
+  "/images/packaging-supplies-hero-6.jpeg",
 ];
 
 function useLocationState() {
@@ -38,6 +38,33 @@ function useDocumentTitle(title) {
 
 function createSearchParams(search) {
   return new URLSearchParams(search);
+}
+
+function createWhatsAppInquiryMessage(inquiry) {
+  const customerLines = [
+    `Name: ${inquiry.name}`,
+    `Email: ${inquiry.email}`,
+    inquiry.phone ? `Phone: ${inquiry.phone}` : null,
+    inquiry.company ? `Company: ${inquiry.company}` : null,
+  ].filter(Boolean);
+
+  const itemLines = inquiry.items.map((item, index) => {
+    const note = item.note ? `, Spec: ${item.note}` : "";
+    return `${index + 1}. ${item.name} - Qty: ${item.quantity}${note}`;
+  });
+
+  return [
+    "New bulk packaging inquiry",
+    "",
+    ...customerLines,
+    "",
+    "Items:",
+    ...itemLines,
+    inquiry.message ? "" : null,
+    inquiry.message ? `Message: ${inquiry.message}` : null,
+  ]
+    .filter((line) => line !== null)
+    .join("\n");
 }
 
 export default function App() {
@@ -290,10 +317,15 @@ function CatalogPage({ searchParams }) {
   }, [category, query]);
 
   const updateFilters = (next) => {
+    const isTypingSearch = Object.prototype.hasOwnProperty.call(next, "q");
+
     navigate("/catalog", {
       category,
       q: query,
       ...next,
+    }, {
+      keepScroll: isTypingSearch,
+      replace: isTypingSearch,
     });
   };
 
@@ -775,6 +807,11 @@ function InquiryPage() {
 
     const saved = JSON.parse(window.localStorage.getItem("sa_inquiries_v1") || "[]");
     window.localStorage.setItem("sa_inquiries_v1", JSON.stringify([inquiry, ...saved]));
+    window.open(
+      `https://wa.me/919945662206?text=${encodeURIComponent(createWhatsAppInquiryMessage(inquiry))}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
 
     window.setTimeout(() => {
       setSubmitted(true);
@@ -793,8 +830,8 @@ function InquiryPage() {
           </div>
           <h1 className="mt-6 text-3xl font-bold">Quote request received</h1>
           <p className="mt-2 max-w-md text-muted-foreground">
-            Thank you. This frontend-only version saves the inquiry in your browser. Your
-            team can connect a backend later when you are ready.
+            Thank you. A WhatsApp message with your inquiry details has been prepared for our
+            sales team.
           </p>
           <Link
             to="/catalog"

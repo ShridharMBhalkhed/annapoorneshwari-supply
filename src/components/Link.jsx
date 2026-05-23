@@ -12,11 +12,17 @@ export function buildHref(to, search) {
   return query ? `${to}?${query}` : to;
 }
 
-export function navigate(to, search) {
+export function navigate(to, search, options = {}) {
   const href = buildHref(to, search);
-  window.history.pushState({}, "", href);
+  if (options.replace) {
+    window.history.replaceState({}, "", href);
+  } else {
+    window.history.pushState({}, "", href);
+  }
   window.dispatchEvent(new Event(NAVIGATE_EVENT));
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (!options.keepScroll) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 }
 
 export function subscribeToNavigation(callback) {
