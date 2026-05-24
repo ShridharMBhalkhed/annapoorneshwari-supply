@@ -17,6 +17,7 @@ const heroSlides = [
   "/images/packaging-supplies-hero-6.jpeg",
 ];
 const siteUrl = "https://annapoorneshwari-supply.netlify.app";
+const whatsappUrl = "https://wa.me/919945662206";
 const storeAddress =
   "No 754A/01, SLV Layout, Railway Station Road, Basavanahalli, Nelamangala, Bangalore Rural - 562123, Karnataka, India";
 const storeMapQuery = encodeURIComponent(`Shree Annapoorneshwari Packaging ${storeAddress}`);
@@ -284,7 +285,56 @@ export default function App() {
     <>
       <InitialLoader />
       <AppRoutes pathname={pathname} searchParams={searchParams} />
+      <FloatingActions pathname={pathname} />
     </>
+  );
+}
+
+function FloatingActions({ pathname }) {
+  const [showHomeArrow, setShowHomeArrow] = useState(false);
+
+  useEffect(() => {
+    if (pathname !== "/") {
+      setShowHomeArrow(false);
+      return;
+    }
+
+    const updateArrow = () => setShowHomeArrow(window.scrollY > 420);
+    updateArrow();
+    window.addEventListener("scroll", updateArrow, { passive: true });
+    return () => window.removeEventListener("scroll", updateArrow);
+  }, [pathname]);
+
+  return (
+    <div className="fixed bottom-5 right-4 z-[60] flex flex-col items-center gap-3 md:bottom-7 md:right-7">
+      {pathname === "/" && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white/90 text-[#1f4f9a] shadow-md shadow-black/10 backdrop-blur transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-safety hover:bg-safety hover:text-safety-foreground focus:outline-none focus:ring-2 focus:ring-safety/40 dark:bg-background/90 dark:text-white ${
+            showHomeArrow
+              ? "translate-y-0 opacity-100"
+              : "pointer-events-none translate-y-3 opacity-0"
+          }`}
+          aria-label="Back to top"
+          title="Back to top"
+          tabIndex={showHomeArrow ? 0 : -1}
+          aria-hidden={!showHomeArrow}
+        >
+          <Icon name="arrowUp" className="h-5 w-5" />
+        </button>
+      )}
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#36c763] bg-white/90 text-[#22a84f] shadow-lg shadow-black/10 backdrop-blur transition hover:-translate-y-0.5 hover:bg-[#36c763] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#36c763]/40 dark:bg-background/90"
+        aria-label="Chat on WhatsApp"
+        title="WhatsApp"
+      >
+        <Icon name="messageCircle" className="h-6 w-6" />
+      </a>
+    </div>
   );
 }
 

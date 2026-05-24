@@ -155,16 +155,18 @@
   }
 
   :where(a, button).bg-safety {
-    background-image: linear-gradient(135deg, oklch(0.86 0.17 76), var(--safety) 52%, oklch(0.68 0.17 58));
-    box-shadow: 0 10px 22px oklch(0.38 0.12 65 / 16%);
+    background-color: var(--safety);
+    background-image: none;
+    box-shadow: 0 6px 14px oklch(0.38 0.12 65 / 12%);
   }
 
   :where(a, button).bg-safety:hover {
-    filter: saturate(1.05) brightness(1.02);
+    filter: brightness(0.98);
   }
 
   :where(a, button).bg-steel {
-    background-image: linear-gradient(135deg, oklch(0.36 0.13 255), var(--steel) 56%, oklch(0.2 0.08 255));
+    background-color: var(--steel);
+    background-image: none;
   }
 
   .brand-hero,

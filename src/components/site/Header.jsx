@@ -324,12 +324,12 @@ export function Header() {
               <div className="grid gap-2 border-t pt-3">
                 <Link
                   to="/saved"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 rounded-sm border bg-card px-3 py-2"
-            >
-              <Icon name="bookmark" className="h-4 w-4" />
-              Saved Items
-            </Link>
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 rounded-sm border bg-card px-3 py-2"
+                >
+                  <Icon name="bookmark" className="h-4 w-4" />
+                  Saved Items
+                </Link>
                 <Link
                   to="/account"
                   search={{ mode: customer ? "orders" : "login" }}
