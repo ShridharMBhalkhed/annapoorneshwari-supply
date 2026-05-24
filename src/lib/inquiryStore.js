@@ -29,6 +29,12 @@ function emit() {
   listeners.forEach((listener) => listener());
 }
 
+function emitAdded() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("sa:quote-added"));
+  }
+}
+
 export const inquiryStore = {
   subscribe(listener) {
     ensureLoaded();
@@ -59,6 +65,7 @@ export const inquiryStore = {
     }
 
     emit();
+    emitAdded();
   },
   remove(productId) {
     ensureLoaded();

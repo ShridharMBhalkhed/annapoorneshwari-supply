@@ -16,6 +16,72 @@ const heroSlides = [
   "/images/packaging-supplies-hero-5.jpeg",
   "/images/packaging-supplies-hero-6.jpeg",
 ];
+const siteUrl = "https://annapoorneshwari-supply.netlify.app";
+const defaultDescription =
+  "Industrial packaging materials supplier for BOPP tapes, films, corrugated boxes, strapping, bubble wrap and bulk packing accessories.";
+const savedItemsKey = "sa_saved_products_v1";
+const productGalleryImages = {
+  "bopp-brown-tape": [
+    "https://images.pexels.com/photos/8250941/pexels-photo-8250941.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/3615728/pexels-photo-3615728.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "bopp-transparent-tape": [
+    "https://images.pexels.com/photos/32001365/pexels-photo-32001365.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/8250941/pexels-photo-8250941.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "printed-bopp-tape": [
+    "https://images.pexels.com/photos/3615728/pexels-photo-3615728.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/4481326/pexels-photo-4481326.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "masking-tape": [
+    "https://images.pexels.com/photos/8250941/pexels-photo-8250941.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/25300276/pexels-photo-25300276.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "stretch-film-roll": [
+    "https://images.pexels.com/photos/3615728/pexels-photo-3615728.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/4277794/pexels-photo-4277794.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "shrink-film": [
+    "https://images.pexels.com/photos/4481326/pexels-photo-4481326.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/3615728/pexels-photo-3615728.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "surface-protection-film": [
+    "https://images.pexels.com/photos/4277794/pexels-photo-4277794.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/4481326/pexels-photo-4481326.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "corrugated-boxes": [
+    "https://images.pexels.com/photos/5025500/pexels-photo-5025500.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/28316095/pexels-photo-28316095.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "heavy-duty-cartons": [
+    "https://images.pexels.com/photos/18500278/pexels-photo-18500278.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/5025500/pexels-photo-5025500.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "pp-strapping-roll": [
+    "https://images.pexels.com/photos/4481326/pexels-photo-4481326.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/4277794/pexels-photo-4277794.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "pet-strap-roll": [
+    "https://images.pexels.com/photos/4277794/pexels-photo-4277794.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/4481326/pexels-photo-4481326.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "bubble-wrap-roll": [
+    "https://images.pexels.com/photos/3616731/pexels-photo-3616731.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/18500278/pexels-photo-18500278.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "foam-sheet-roll": [
+    "https://images.pexels.com/photos/18541877/pexels-photo-18541877.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/3616731/pexels-photo-3616731.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "pp-woven-bags": [
+    "https://images.pexels.com/photos/4481326/pexels-photo-4481326.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/8356229/pexels-photo-8356229.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+  "edge-protectors": [
+    "https://images.pexels.com/photos/28316095/pexels-photo-28316095.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    "https://images.pexels.com/photos/4277794/pexels-photo-4277794.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  ],
+};
 
 function useLocationState() {
   const readLocation = () => ({
@@ -36,8 +102,99 @@ function useDocumentTitle(title) {
   }, [title]);
 }
 
+function setMetaTag(selector, attributes) {
+  let tag = document.head.querySelector(selector);
+
+  if (!tag) {
+    tag = document.createElement("meta");
+    Object.entries(attributes.match).forEach(([key, value]) => tag.setAttribute(key, value));
+    document.head.appendChild(tag);
+  }
+
+  Object.entries(attributes.content).forEach(([key, value]) => tag.setAttribute(key, value));
+}
+
+function usePageMeta({ title, description = defaultDescription, image, url }) {
+  useEffect(() => {
+    document.title = title;
+    setMetaTag('meta[name="description"]', {
+      match: { name: "description" },
+      content: { content: description },
+    });
+    setMetaTag('meta[property="og:title"]', {
+      match: { property: "og:title" },
+      content: { content: title },
+    });
+    setMetaTag('meta[property="og:description"]', {
+      match: { property: "og:description" },
+      content: { content: description },
+    });
+    setMetaTag('meta[property="og:url"]', {
+      match: { property: "og:url" },
+      content: { content: url || siteUrl },
+    });
+    if (image) {
+      setMetaTag('meta[property="og:image"]', {
+        match: { property: "og:image" },
+        content: { content: image },
+      });
+    }
+  }, [description, image, title, url]);
+}
+
 function createSearchParams(search) {
   return new URLSearchParams(search);
+}
+
+function readSavedProductIds() {
+  try {
+    return JSON.parse(window.localStorage.getItem(savedItemsKey) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function writeSavedProductIds(ids) {
+  window.localStorage.setItem(savedItemsKey, JSON.stringify(ids));
+  window.dispatchEvent(new CustomEvent("sa:saved-products-changed"));
+}
+
+function getSavedProducts() {
+  return readSavedProductIds()
+    .map((id) => catalog.products.find((product) => product.id === id))
+    .filter(Boolean);
+}
+
+function useSavedProducts() {
+  const [savedProducts, setSavedProducts] = useState(() => getSavedProducts());
+
+  useEffect(() => {
+    const update = () => setSavedProducts(getSavedProducts());
+
+    window.addEventListener("storage", update);
+    window.addEventListener("sa:saved-products-changed", update);
+    return () => {
+      window.removeEventListener("storage", update);
+      window.removeEventListener("sa:saved-products-changed", update);
+    };
+  }, []);
+
+  const toggleSaved = (product) => {
+    const savedIds = readSavedProductIds();
+    const isSaved = savedIds.includes(product.id);
+    const nextIds = isSaved
+      ? savedIds.filter((id) => id !== product.id)
+      : [product.id, ...savedIds].slice(0, 40);
+
+    writeSavedProductIds(nextIds);
+    return !isSaved;
+  };
+
+  return {
+    savedProducts,
+    savedIds: savedProducts.map((product) => product.id),
+    toggleSaved,
+  };
 }
 
 function createWhatsAppInquiryMessage(inquiry) {
@@ -73,17 +230,72 @@ export default function App() {
   const pathname = location.pathname.replace(/\/+$/, "") || "/";
   const searchParams = createSearchParams(location.search);
 
+  return (
+    <>
+      <InitialLoader />
+      <AppRoutes pathname={pathname} searchParams={searchParams} />
+    </>
+  );
+}
+
+function AppRoutes({ pathname, searchParams }) {
   if (pathname === "/") return <HomePage />;
   if (pathname === "/catalog") return <CatalogPage searchParams={searchParams} />;
   if (pathname === "/about") return <AboutPage />;
   if (pathname === "/contact") return <ContactPage />;
   if (pathname === "/inquiry") return <InquiryPage />;
+  if (pathname === "/saved") return <SavedItemsPage />;
   if (pathname.startsWith("/product/")) {
     const slug = decodeURIComponent(pathname.replace("/product/", ""));
     return <ProductPage slug={slug} />;
   }
 
   return <NotFoundPage />;
+}
+
+function InitialLoader() {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setVisible(false), 1700);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div className="delivery-loader-screen fixed inset-0 z-[100] flex items-center justify-center bg-background/95 backdrop-blur-sm">
+      <DeliveryTruckLoader />
+    </div>
+  );
+}
+
+function DeliveryTruckLoader({ label = "Loading supplies..." }) {
+  return (
+    <div className="delivery-loader" aria-label={label} role="status">
+      <div className="delivery-scene">
+        <span className="speed-line speed-line-one" />
+        <span className="speed-line speed-line-two" />
+        <span className="speed-line speed-line-three" />
+        <span className="loader-box loader-box-one" />
+        <span className="loader-box loader-box-two" />
+        <span className="loader-box loader-box-three" />
+        <div className="loader-truck">
+          <span className="truck-cargo" />
+          <span className="truck-cab" />
+          <span className="truck-window" />
+          <span className="truck-wheel truck-wheel-one" />
+          <span className="truck-wheel truck-wheel-two" />
+          <span className="truck-wheel truck-wheel-three" />
+        </div>
+      </div>
+      <div className="delivery-loader-label">
+        {label}
+      </div>
+    </div>
+  );
 }
 
 function HomePage() {
@@ -298,6 +510,17 @@ function CatalogPage({ searchParams }) {
   useDocumentTitle("Product Catalog - Shree Annapoorneshwari Packaging");
   const category = searchParams.get("category") || "all";
   const query = searchParams.get("q") || "";
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+
+  useEffect(() => {
+    const saved = JSON.parse(window.localStorage.getItem("sa_recent_products_v1") || "[]");
+    setRecentlyViewed(
+      saved
+        .map((id) => catalog.products.find((item) => item.id === id))
+        .filter(Boolean)
+        .slice(0, 4),
+    );
+  }, []);
 
   const filtered = useMemo(() => {
     const selectedCategory = catalog.categories.find((item) => item.slug === category);
@@ -316,6 +539,7 @@ function CatalogPage({ searchParams }) {
       return true;
     });
   }, [category, query]);
+  const searchSuggestions = query.trim() ? filtered.slice(0, 5) : [];
 
   const updateFilters = (next) => {
     const isTypingSearch = Object.prototype.hasOwnProperty.call(next, "q");
@@ -386,6 +610,22 @@ function CatalogPage({ searchParams }) {
                   <Icon name="x" className="h-4 w-4" />
                 </button>
               )}
+              {searchSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-sm border bg-card shadow-lg">
+                  {searchSuggestions.map((product) => (
+                    <Link
+                      key={product.id}
+                      to={`/product/${product.slug}`}
+                      className="block border-b px-3 py-2 text-xs last:border-b-0 hover:bg-secondary"
+                    >
+                      <span className="block font-semibold">{product.name}</span>
+                      <span className="line-clamp-1 text-muted-foreground">
+                        {product.short_description}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="text-sm text-muted-foreground">
               {filtered.length} result{filtered.length !== 1 && "s"}
@@ -401,6 +641,18 @@ function CatalogPage({ searchParams }) {
               {filtered.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
+            </div>
+          )}
+          {recentlyViewed.length > 0 && (
+            <div className="mt-12">
+              <h2 className="border-b-2 border-steel pb-3 text-xl font-bold">
+                Recently Viewed
+              </h2>
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {recentlyViewed.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -465,12 +717,38 @@ function ProductCard({ product }) {
 function ProductPage({ slug }) {
   const { product, related } = getProduct(slug);
   const [added, setAdded] = useState(false);
+  const [productQuantity, setProductQuantity] = useState(1);
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const { savedIds, toggleSaved } = useSavedProducts();
 
   useDocumentTitle(
     product
       ? `${product.name} - Shree Annapoorneshwari Packaging`
       : "Product - Shree Annapoorneshwari Packaging",
   );
+  usePageMeta({
+    title: product
+      ? `${product.name} - Shree Annapoorneshwari Packaging`
+      : "Product - Shree Annapoorneshwari Packaging",
+    description: product?.description || product?.short_description || defaultDescription,
+    image: product?.image_url,
+    url: product ? `${siteUrl}/product/${product.slug}` : siteUrl,
+  });
+
+  useEffect(() => {
+    if (!product) return;
+
+    const saved = JSON.parse(window.localStorage.getItem("sa_recent_products_v1") || "[]");
+    const next = [product.id, ...saved.filter((id) => id !== product.id)].slice(0, 6);
+    window.localStorage.setItem("sa_recent_products_v1", JSON.stringify(next));
+    setRecentlyViewed(
+      saved
+        .filter((id) => id !== product.id)
+        .map((id) => catalog.products.find((item) => item.id === id))
+        .filter(Boolean)
+        .slice(0, 4),
+    );
+  }, [product?.id]);
 
   if (!product) return <NotFoundPage />;
 
@@ -506,13 +784,11 @@ function ProductPage({ slug }) {
 
         <div className="container mx-auto grid gap-10 px-4 py-10 md:grid-cols-2">
           <div>
-            <div className="overflow-hidden rounded-sm border bg-white">
-              <ProductImage
-                name={product.name}
-                url={product.image_url}
-                className="aspect-square w-full object-contain p-8"
-              />
-            </div>
+            <ProductMediaGallery
+              isSaved={savedIds.includes(product.id)}
+              product={product}
+              onToggleSaved={() => toggleSaved(product)}
+            />
           </div>
           <div>
             {category && (
@@ -565,6 +841,7 @@ function ProductPage({ slug }) {
             )}
 
             <div className="mt-8 flex flex-wrap gap-3">
+              <QuantityStepper value={productQuantity} onChange={setProductQuantity} />
               <button
                 type="button"
                 onClick={() => {
@@ -573,6 +850,7 @@ function ProductPage({ slug }) {
                     slug: product.slug,
                     name: product.name,
                     imageUrl: product.image_url,
+                    quantity: productQuantity,
                   });
                   setAdded(true);
                   window.setTimeout(() => setAdded(false), 2800);
@@ -597,6 +875,16 @@ function ProductPage({ slug }) {
                   <Icon name="phone" className="h-4 w-4" /> +91 99456 62206
                 </a>
                 <a
+                  href={`https://wa.me/919945662206?text=${encodeURIComponent(
+                    `Please call me back about ${product.name}.`,
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1.5 hover:text-safety"
+                >
+                  <Icon name="phone" className="h-4 w-4" /> Request Callback
+                </a>
+                <a
                   href="mailto:s.annapoorneshwarienterprises@gmail.com"
                   className="flex items-center gap-1.5 hover:text-safety"
                 >
@@ -616,13 +904,21 @@ function ProductPage({ slug }) {
                   key={item.id}
                   className="group flex flex-col rounded-sm border bg-card hover:border-safety"
                 >
-                  <Link to={`/product/${item.slug}`} className="block">
-                    <ProductImage
-                      name={item.name}
-                      url={item.image_url}
-                      className="aspect-square w-full bg-white object-contain p-4"
+                  <div className="relative">
+                    <Link to={`/product/${item.slug}`} className="block">
+                      <ProductImage
+                        name={item.name}
+                        url={item.image_url}
+                        className="aspect-square w-full bg-white object-contain p-4"
+                      />
+                    </Link>
+                    <SaveButton
+                      isSaved={savedIds.includes(item.id)}
+                      onClick={() => toggleSaved(item)}
+                      className="absolute right-2 top-2"
+                      label={`Save ${item.name}`}
                     />
-                  </Link>
+                  </div>
                   <div className="flex flex-1 flex-col border-t p-3">
                     <Link
                       to={`/product/${item.slug}`}
@@ -652,6 +948,38 @@ function ProductPage({ slug }) {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+        {recentlyViewed.length > 0 && (
+          <div className="bg-secondary/30">
+            <div className="container mx-auto px-4 py-12">
+              <h2 className="border-b-2 border-steel pb-3 text-xl font-bold">
+                Recently Viewed
+              </h2>
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {recentlyViewed.map((item) => (
+                  <Link
+                    key={item.id}
+                    to={`/product/${item.slug}`}
+                    className="group rounded-sm border bg-card hover:border-safety"
+                  >
+                    <ProductImage
+                      name={item.name}
+                      url={item.image_url}
+                      className="aspect-square w-full bg-white object-contain p-4"
+                    />
+                    <div className="border-t p-3">
+                      <div className="text-sm font-bold group-hover:text-safety">{item.name}</div>
+                      {item.short_description && (
+                        <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                          {item.short_description}
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -825,6 +1153,7 @@ function InquiryPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submittedInquiry, setSubmittedInquiry] = useState(null);
   const [isSending, setIsSending] = useState(false);
 
   const onSubmit = (event) => {
@@ -847,10 +1176,11 @@ function InquiryPage() {
     );
 
     window.setTimeout(() => {
+      setSubmittedInquiry(inquiry);
       setSubmitted(true);
       setIsSending(false);
       inquiryStore.clear();
-    }, 350);
+    }, 1650);
   };
 
   if (submitted) {
@@ -866,6 +1196,35 @@ function InquiryPage() {
             Thank you. A WhatsApp message with your inquiry details has been prepared for our
             sales team.
           </p>
+          {submittedInquiry && (
+            <div className="mt-6 w-full max-w-lg rounded-sm border bg-card p-4 text-left">
+              <div className="border-b pb-2 text-sm font-bold">Inquiry Summary</div>
+              <div className="mt-3 grid gap-1 text-sm text-muted-foreground">
+                <div>
+                  <span className="font-semibold text-foreground">Name:</span>{" "}
+                  {submittedInquiry.name}
+                </div>
+                <div>
+                  <span className="font-semibold text-foreground">Mobile:</span>{" "}
+                  {submittedInquiry.phone}
+                </div>
+                {submittedInquiry.address && (
+                  <div>
+                    <span className="font-semibold text-foreground">Address:</span>{" "}
+                    {submittedInquiry.address}
+                  </div>
+                )}
+              </div>
+              <ul className="mt-3 divide-y rounded-sm border text-sm">
+                {submittedInquiry.items.map((item) => (
+                  <li key={item.productId} className="flex justify-between gap-3 px-3 py-2">
+                    <span className="font-medium">{item.name}</span>
+                    <span className="text-muted-foreground">Qty: {item.quantity}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <Link
             to="/catalog"
             className="mt-6 inline-flex items-center gap-2 rounded-sm bg-steel px-5 py-3 text-sm font-bold uppercase tracking-wider text-steel-foreground"
@@ -880,6 +1239,11 @@ function InquiryPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      {isSending && (
+        <div className="delivery-loader-screen fixed inset-0 z-[100] flex items-center justify-center bg-background/95 backdrop-blur-sm">
+          <DeliveryTruckLoader label="Sending quote request..." />
+        </div>
+      )}
       <Header />
       <main className="flex-1">
         <div className="border-b bg-steel text-steel-foreground">
@@ -933,15 +1297,12 @@ function InquiryPage() {
                           {item.name}
                         </Link>
                         <div className="mt-2 flex flex-wrap items-center gap-2">
-                          <label className="text-xs text-muted-foreground">Qty</label>
-                          <input
-                            type="number"
-                            min={1}
+                          <QuantityStepper
                             value={item.quantity}
-                            onChange={(event) =>
-                              inquiryStore.setQuantity(item.productId, event.target.value)
+                            onChange={(quantity) =>
+                              inquiryStore.setQuantity(item.productId, quantity)
                             }
-                            className="w-24 rounded-sm border px-2 py-1 text-sm"
+                            size="sm"
                           />
                           <input
                             placeholder="Size / spec note (optional)"
@@ -1042,6 +1403,101 @@ function InquiryPage() {
   );
 }
 
+function SavedItemsPage() {
+  useDocumentTitle("Saved Items - Shree Annapoorneshwari Packaging");
+  const { savedProducts, savedIds, toggleSaved } = useSavedProducts();
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1">
+        <div className="border-b bg-steel text-steel-foreground">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-xs font-bold uppercase tracking-widest text-safety">
+              Saved Items
+            </div>
+            <h1 className="mt-1 text-3xl font-bold">Your Saved Products</h1>
+            <p className="mt-1 text-sm text-white/70">
+              Keep useful packaging materials here and add them to your quote when ready.
+            </p>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 py-10">
+          {savedProducts.length === 0 ? (
+            <div className="rounded-sm border border-dashed p-10 text-center">
+              <Icon name="bookmark" className="mx-auto h-10 w-10 text-muted-foreground" />
+              <div className="mt-3 font-semibold">No saved items yet</div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Use the save icon on product images or related products to keep them here.
+              </p>
+              <Link
+                to="/catalog"
+                className="mt-4 inline-flex items-center gap-2 rounded-sm bg-safety px-4 py-2 text-sm font-bold uppercase tracking-wider text-safety-foreground"
+              >
+                Browse Catalog
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {savedProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="group flex flex-col rounded-sm border bg-card transition hover:border-safety hover:shadow-md"
+                >
+                  <div className="relative">
+                    <Link to={`/product/${product.slug}`} className="block">
+                      <ProductImage
+                        name={product.name}
+                        url={product.image_url}
+                        className="aspect-square w-full bg-white object-contain p-4"
+                      />
+                    </Link>
+                    <SaveButton
+                      isSaved={savedIds.includes(product.id)}
+                      onClick={() => toggleSaved(product)}
+                      className="absolute right-2 top-2"
+                      label={`Remove ${product.name} from saved items`}
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col border-t p-3">
+                    <Link
+                      to={`/product/${product.slug}`}
+                      className="text-sm font-bold leading-tight hover:text-safety"
+                    >
+                      {product.name}
+                    </Link>
+                    {product.short_description && (
+                      <div className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                        {product.short_description}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        inquiryStore.add({
+                          productId: product.id,
+                          slug: product.slug,
+                          name: product.name,
+                          imageUrl: product.image_url,
+                        })
+                      }
+                      className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-sm bg-steel py-2 text-xs font-bold uppercase tracking-wider text-steel-foreground hover:bg-safety hover:text-safety-foreground"
+                    >
+                      <Icon name="plus" className="h-3.5 w-3.5" /> Add to Quote
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 function NotFoundPage() {
   useDocumentTitle("Page not found - Shree Annapoorneshwari Packaging");
 
@@ -1102,6 +1558,160 @@ function ContactCard({ icon, title, children }) {
         </div>
       </div>
       <div className="mt-4 text-sm leading-relaxed">{children}</div>
+    </div>
+  );
+}
+
+function ProductMediaGallery({ product, isSaved, onToggleSaved }) {
+  const galleryCandidates = [
+    product.image_url,
+    ...(productGalleryImages[product.id] ?? []),
+  ].filter(Boolean);
+  const images = [...new Set(galleryCandidates)];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [shareNotice, setShareNotice] = useState("");
+  const activeImage = images[activeIndex] ?? product.image_url;
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [product.id]);
+
+  const shareProduct = async (event) => {
+    event.currentTarget.blur();
+
+    const shareUrl = `${siteUrl}/product/${product.slug}`;
+    const shareData = {
+      title: product.name,
+      text: product.short_description || product.name,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        setShareNotice("Product shared");
+        window.setTimeout(() => setShareNotice(""), 1800);
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
+
+    await navigator.clipboard?.writeText(shareUrl);
+    setShareNotice("Product link copied");
+    window.setTimeout(() => setShareNotice(""), 1800);
+  };
+
+  return (
+    <div>
+      <div className="relative overflow-hidden rounded-sm border bg-white">
+        <button
+          type="button"
+          onClick={shareProduct}
+          className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/90 text-steel shadow-sm backdrop-blur transition hover:bg-safety hover:text-safety-foreground focus:outline-none focus:ring-0"
+          aria-label={`Share ${product.name}`}
+          title="Share"
+        >
+          <Icon name="share" className="h-4 w-4" />
+        </button>
+        <SaveButton
+          isSaved={isSaved}
+          onClick={onToggleSaved}
+          className="absolute right-3 top-14 z-10"
+          label={isSaved ? `Remove ${product.name} from saved items` : `Save ${product.name}`}
+        />
+        {shareNotice && (
+          <div className="absolute right-3 top-[100px] z-10 rounded-sm bg-steel px-2.5 py-1 text-[11px] font-semibold text-steel-foreground shadow">
+            {shareNotice}
+          </div>
+        )}
+        <ProductImage
+          name={product.name}
+          url={activeImage}
+          className="aspect-square w-full object-contain p-8"
+        />
+      </div>
+      {images.length > 1 && (
+        <div className="mt-3 flex items-center justify-center gap-2">
+          {images.map((image, index) => (
+            <button
+              key={`${image}-${index}`}
+              type="button"
+              onPointerDown={(event) => event.preventDefault()}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={(event) => {
+                setActiveIndex(index);
+                event.currentTarget.blur();
+                document.activeElement?.blur?.();
+              }}
+              className={`h-2.5 rounded-full transition-all ${
+                activeIndex === index ? "w-7 bg-safety" : "w-2.5 bg-muted-foreground/35"
+              } cursor-pointer select-none outline-none caret-transparent focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0`}
+              aria-label={`Show product image ${index + 1}`}
+              tabIndex={-1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SaveButton({ isSaved, onClick, className = "", label = "Save item" }) {
+  return (
+    <button
+      type="button"
+      onClick={(event) => {
+        event.currentTarget.blur();
+        onClick?.();
+      }}
+      className={`${className} inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/90 text-steel shadow-sm backdrop-blur transition hover:bg-safety hover:text-safety-foreground focus:outline-none focus:ring-0 ${
+        isSaved ? "bg-safety text-safety-foreground" : ""
+      }`}
+      aria-label={label}
+      title={isSaved ? "Saved" : "Save"}
+    >
+      <Icon name="bookmark" className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
+    </button>
+  );
+}
+
+function QuantityStepper({ value, onChange, size = "md" }) {
+  const quantity = Math.max(1, Number.parseInt(value || 1, 10) || 1);
+  const isSmall = size === "sm";
+  const buttonClass = isSmall ? "h-8 w-8" : "h-11 w-11";
+  const inputClass = isSmall ? "h-8 w-12 text-sm" : "h-11 w-14 text-base";
+
+  const updateQuantity = (nextValue) => {
+    onChange(Math.max(1, Number.parseInt(nextValue || 1, 10) || 1));
+  };
+
+  return (
+    <div className="inline-flex items-center overflow-hidden rounded-sm border bg-card">
+      <button
+        type="button"
+        onClick={() => updateQuantity(quantity - 1)}
+        className={`${buttonClass} inline-flex items-center justify-center text-muted-foreground hover:bg-secondary hover:text-foreground`}
+        aria-label="Decrease quantity"
+      >
+        <Icon name="minus" className="h-3.5 w-3.5" />
+      </button>
+      <input
+        type="number"
+        min={1}
+        value={quantity}
+        onChange={(event) => updateQuantity(event.target.value)}
+        className={`${inputClass} border-x bg-background text-center font-semibold outline-none focus:bg-card`}
+        aria-label="Quantity"
+      />
+      <button
+        type="button"
+        onClick={() => updateQuantity(quantity + 1)}
+        className={`${buttonClass} inline-flex items-center justify-center text-muted-foreground hover:bg-secondary hover:text-foreground`}
+        aria-label="Increase quantity"
+      >
+        <Icon name="plus" className="h-3.5 w-3.5" />
+      </button>
     </div>
   );
 }

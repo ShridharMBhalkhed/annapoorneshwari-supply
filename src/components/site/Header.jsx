@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link, navigate } from "../Link.jsx";
 import { Icon } from "../Icon.jsx";
 import { useInquiryCart } from "../../lib/inquiryStore.js";
+import { getCatalog } from "../../data/catalog.js";
+
+const catalog = getCatalog();
 
 function getPreferredTheme() {
   const savedTheme = window.localStorage?.getItem("sa_theme");
@@ -18,7 +21,7 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddedNotice, setShowAddedNotice] = useState(false);
-  const previousCount = useRef(count);
+  const addedNoticeTimer = useRef(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
@@ -27,15 +30,26 @@ export function Header() {
   }, [theme]);
 
   useEffect(() => {
-    if (count > previousCount.current) {
-      setShowAddedNotice(true);
-      const timer = window.setTimeout(() => setShowAddedNotice(false), 2800);
-      previousCount.current = count;
-      return () => window.clearTimeout(timer);
-    }
+    const showNotice = () => {
+      if (addedNoticeTimer.current) {
+        window.clearTimeout(addedNoticeTimer.current);
+      }
 
-    previousCount.current = count;
-  }, [count]);
+      setShowAddedNotice(true);
+      addedNoticeTimer.current = window.setTimeout(() => {
+        setShowAddedNotice(false);
+        addedNoticeTimer.current = null;
+      }, 2800);
+    };
+
+    window.addEventListener("sa:quote-added", showNotice);
+    return () => {
+      window.removeEventListener("sa:quote-added", showNotice);
+      if (addedNoticeTimer.current) {
+        window.clearTimeout(addedNoticeTimer.current);
+      }
+    };
+  }, []);
 
   const nextTheme = theme === "dark" ? "light" : "dark";
   const navItems = [
@@ -44,6 +58,15 @@ export function Header() {
     { to: "/about", label: "About" },
     { to: "/contact", label: "Contact" },
   ];
+  const searchSuggestions = searchQuery.trim()
+    ? catalog.products
+        .filter((product) =>
+          `${product.name} ${product.short_description ?? ""}`
+            .toLowerCase()
+            .includes(searchQuery.trim().toLowerCase()),
+        )
+        .slice(0, 4)
+    : [];
   const submitSearch = (event) => {
     event.preventDefault();
     const query = searchQuery.trim();
@@ -126,6 +149,14 @@ export function Header() {
                 />
               )}
             </button>
+            <Link
+              to="/saved"
+              className="hidden h-10 w-10 items-center justify-center rounded-sm text-foreground transition hover:bg-secondary hover:text-safety md:inline-flex"
+              aria-label="Saved items"
+              title="Saved items"
+            >
+              <Icon name="bookmark" className="h-4 w-4" />
+            </Link>
             <button
               type="button"
               onClick={() => setTheme(nextTheme)}
@@ -171,6 +202,26 @@ export function Header() {
                   className="w-full rounded-sm border bg-card py-2.5 pl-10 pr-3 text-sm outline-none focus:border-safety"
                   autoFocus
                 />
+                {searchSuggestions.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-sm border bg-card shadow-lg">
+                    {searchSuggestions.map((product) => (
+                      <Link
+                        key={product.id}
+                        to={`/product/${product.slug}`}
+                        onClick={() => {
+                          setSearchOpen(false);
+                          setSearchQuery("");
+                        }}
+                        className="block border-b px-3 py-2 text-xs last:border-b-0 hover:bg-secondary"
+                      >
+                        <span className="block font-semibold">{product.name}</span>
+                        <span className="line-clamp-1 text-muted-foreground">
+                          {product.short_description}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
               <button
                 type="submit"
@@ -197,6 +248,14 @@ export function Header() {
                 ))}
               </nav>
               <div className="grid gap-2 border-t pt-3">
+                <Link
+                  to="/saved"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 rounded-sm border bg-card px-3 py-2"
+                >
+                  <Icon name="bookmark" className="h-4 w-4" />
+                  Saved Items
+                </Link>
                 <button
                   type="button"
                   onClick={() => setTheme(nextTheme)}
@@ -236,15 +295,27 @@ export function Header() {
       </header>
       {showAddedNotice && (
         <div
-          className="quote-snackbar pointer-events-none fixed inset-x-3 bottom-5 top-auto z-50 rounded-lg bg-steel px-4 py-2.5 text-center text-steel-foreground shadow-xl shadow-black/20 md:inset-x-8 lg:inset-x-12"
+          className="quote-snackbar pointer-events-none fixed inset-x-3 bottom-5 top-auto z-50 rounded-lg bg-steel px-4 py-2.5 text-steel-foreground shadow-xl shadow-black/20 md:inset-x-8 lg:inset-x-12"
           role="status"
           aria-live="polite"
         >
-          <div className="text-xs font-bold uppercase leading-tight text-safety">
-            ADDED TO QUOTE
-          </div>
-          <div className="mt-0.5 text-[11px] leading-tight text-white/75">
-            Review it anytime in Request Quote.
+          <div className="mx-auto flex max-w-xl items-center justify-center gap-3">
+            <span className="quote-mini-truck" aria-hidden="true">
+              <span className="quote-mini-box quote-mini-box-one" />
+              <span className="quote-mini-box quote-mini-box-two" />
+              <span className="quote-mini-body" />
+              <span className="quote-mini-cab" />
+              <span className="quote-mini-wheel quote-mini-wheel-one" />
+              <span className="quote-mini-wheel quote-mini-wheel-two" />
+            </span>
+            <span className="text-center">
+              <span className="block text-xs font-bold uppercase leading-tight text-safety">
+                ADDED TO QUOTE
+              </span>
+              <span className="mt-0.5 block text-[11px] leading-tight text-white/75">
+                Review it anytime in Request Quote.
+              </span>
+            </span>
           </div>
         </div>
       )}
