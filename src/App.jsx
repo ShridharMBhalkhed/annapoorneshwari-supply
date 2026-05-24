@@ -17,6 +17,28 @@ const heroSlides = [
   "/images/packaging-supplies-hero-6.jpeg",
 ];
 const siteUrl = "https://annapoorneshwari-supply.netlify.app";
+const storeAddress =
+  "No 754A/01, SLV Layout, Railway Station Road, Basavanahalli, Nelamangala, Bangalore Rural - 562123, Karnataka, India";
+const storeMapQuery = encodeURIComponent(`Shree Annapoorneshwari Packaging ${storeAddress}`);
+const storeMapEmbedUrl = `https://maps.google.com/maps?q=${storeMapQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+const storeDirectionsUrl = `https://www.google.com/maps/search/?api=1&query=${storeMapQuery}`;
+const storeReviews = [
+  {
+    name: "Siddharth Surana",
+    detail: "Local Guide - 7 months ago",
+    text: "Purchased stretch films for industrial use. Very competitive pricing. Owners are very actively working hard. Definitely recommended.",
+  },
+  {
+    name: "Dhanu Dhanish",
+    detail: "Google review - 9 months ago",
+    text: "Intime supplier and best quality and Price",
+  },
+  {
+    name: "Kiccha Sudarshan",
+    detail: "Google review - 9 months ago",
+    text: "In time material supplier and good quality material.",
+  },
+];
 const defaultDescription =
   "Industrial packaging materials supplier for BOPP tapes, films, corrugated boxes, strapping, bubble wrap and bulk packing accessories.";
 const savedItemsKey = "sa_saved_products_v1";
@@ -476,6 +498,10 @@ function HomePage() {
             </div>
           </div>
         </section>
+
+        <CustomerReviewsSection />
+
+        <StoreLocationSection />
 
         <section className="container mx-auto px-4 py-20">
           <div className="brand-panel relative overflow-visible rounded-sm bg-steel px-8 py-10 text-steel-foreground md:min-h-[300px] md:px-12 md:py-12 md:pr-[340px] lg:pr-[400px]">
@@ -1117,8 +1143,7 @@ function ContactPage() {
             </a>
           </ContactCard>
           <ContactCard icon="mapPin" title="Address">
-            No 754A/01, SLV Layout, Railway Station Road, Basavanahalli, Nelamangala,
-            Bangalore Rural - 562123, Karnataka, India
+            {storeAddress}
           </ContactCard>
           <ContactCard icon="clock" title="Business Hours">
             Mon - Sat - 9:00 AM - 7:00 PM IST
@@ -1126,6 +1151,10 @@ function ContactPage() {
             Sunday closed
           </ContactCard>
         </div>
+
+        <StoreLocationSection compact />
+
+        <CustomerReviewsSection compact />
 
         <div className="container mx-auto px-4 pb-16 text-center">
           <Link
@@ -1543,6 +1572,130 @@ function Info({ title, children }) {
       <div className="text-xs font-bold uppercase tracking-widest text-safety">{title}</div>
       <div className="mt-2 text-sm leading-relaxed">{children}</div>
     </div>
+  );
+}
+
+function CustomerReviewsSection({ compact = false }) {
+  return (
+    <section className={compact ? "bg-secondary/30" : "bg-background"}>
+      <div className={`container mx-auto px-4 ${compact ? "py-12" : "py-16"}`}>
+        <div className="flex flex-col gap-3 border-b-2 border-steel pb-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div className="text-xs font-bold uppercase tracking-widest text-safety">
+              Customer Reviews
+            </div>
+            <h2 className="mt-1 text-2xl font-bold md:text-3xl">
+              Trusted by Local Businesses
+            </h2>
+          </div>
+          <a
+            href={storeDirectionsUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-safety hover:underline"
+          >
+            View on Google Maps <Icon name="arrowRight" className="h-4 w-4" />
+          </a>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {storeReviews.map((review) => (
+            <article key={review.name} className="rounded-sm border bg-card p-5">
+              <div className="flex gap-1 text-safety" aria-label="5 star review">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Icon key={index} name="star" className="h-4 w-4 fill-current" />
+                ))}
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-foreground">"{review.text}"</p>
+              <div className="mt-4 border-t pt-3">
+                <div className="text-sm font-bold">{review.name}</div>
+                <div className="text-xs text-muted-foreground">{review.detail}</div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StoreLocationSection({ compact = false }) {
+  return (
+    <section className={compact ? "bg-background" : "bg-secondary/30"}>
+      <div className={`container mx-auto px-4 ${compact ? "py-12" : "py-16"}`}>
+        <div className="grid gap-8 lg:grid-cols-[1fr,420px]">
+          <div>
+            <div className="border-b-2 border-steel pb-3">
+              <div className="text-xs font-bold uppercase tracking-widest text-safety">
+                Store Location
+              </div>
+              <h2 className="mt-1 text-2xl font-bold md:text-3xl">
+                Visit Our Nelamangala Store
+              </h2>
+            </div>
+            <div className="mt-6 overflow-hidden rounded-sm border bg-card">
+              <iframe
+                title="Shree Annapoorneshwari Packaging location map"
+                src={storeMapEmbedUrl}
+                className="h-[320px] w-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </div>
+          <aside className="rounded-sm border bg-card p-6">
+            <div className="flex items-start gap-3">
+              <div className="rounded-sm bg-safety/15 p-2">
+                <Icon name="mapPin" className="h-5 w-5 text-safety" />
+              </div>
+              <div>
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  Pickup & Dispatch Point
+                </div>
+                <p className="mt-3 text-sm leading-relaxed">{storeAddress}</p>
+              </div>
+            </div>
+            <div className="mt-6 grid gap-3 text-sm">
+              <div className="flex items-center gap-3">
+                <Icon name="package" className="h-5 w-5 text-safety" />
+                Packaging materials available for bulk purchase
+              </div>
+              <div className="flex items-center gap-3">
+                <Icon name="truck" className="h-5 w-5 text-safety" />
+                Pickup and dispatch support for nearby industrial areas
+              </div>
+              <div className="flex items-center gap-3">
+                <Icon name="clock" className="h-5 w-5 text-safety" />
+                Mon - Sat, 9:00 AM - 7:00 PM IST
+              </div>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href={storeDirectionsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-sm bg-safety px-4 py-2.5 text-sm font-bold uppercase tracking-wider text-safety-foreground hover:opacity-90"
+              >
+                Directions <Icon name="arrowRight" className="h-4 w-4" />
+              </a>
+              <a
+                href="tel:+919945662206"
+                className="inline-flex items-center gap-2 rounded-sm border px-4 py-2.5 text-sm font-bold uppercase tracking-wider hover:border-safety hover:text-safety"
+              >
+                <Icon name="phone" className="h-4 w-4" /> Call
+              </a>
+              <a
+                href="https://wa.me/919945662206"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-sm border px-4 py-2.5 text-sm font-bold uppercase tracking-wider hover:border-safety hover:text-safety"
+              >
+                WhatsApp
+              </a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
   );
 }
 
