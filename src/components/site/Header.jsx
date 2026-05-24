@@ -5,6 +5,15 @@ import { useInquiryCart } from "../../lib/inquiryStore.js";
 import { getCatalog } from "../../data/catalog.js";
 
 const catalog = getCatalog();
+const customerAccountKey = "sa_customer_account_v1";
+
+function readHeaderCustomer() {
+  try {
+    return JSON.parse(window.localStorage.getItem(customerAccountKey) || "null");
+  } catch {
+    return null;
+  }
+}
 
 function getPreferredTheme() {
   const savedTheme = window.localStorage?.getItem("sa_theme");
@@ -19,6 +28,8 @@ export function Header() {
   const [theme, setTheme] = useState(getPreferredTheme);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [customer, setCustomer] = useState(() => readHeaderCustomer());
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddedNotice, setShowAddedNotice] = useState(false);
   const addedNoticeTimer = useRef(null);
@@ -48,6 +59,17 @@ export function Header() {
       if (addedNoticeTimer.current) {
         window.clearTimeout(addedNoticeTimer.current);
       }
+    };
+  }, []);
+
+  useEffect(() => {
+    const updateCustomer = () => setCustomer(readHeaderCustomer());
+
+    window.addEventListener("storage", updateCustomer);
+    window.addEventListener("sa:account-changed", updateCustomer);
+    return () => {
+      window.removeEventListener("storage", updateCustomer);
+      window.removeEventListener("sa:account-changed", updateCustomer);
     };
   }, []);
 
@@ -157,6 +179,58 @@ export function Header() {
             >
               <Icon name="bookmark" className="h-4 w-4" />
             </Link>
+            <div className="relative hidden md:block">
+              <button
+                type="button"
+                onClick={() => setAccountOpen((open) => !open)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border bg-card text-foreground transition hover:border-safety hover:text-safety"
+                aria-expanded={accountOpen}
+                aria-label="Account"
+                title="Account"
+              >
+                {customer ? (
+                  <span className="text-sm font-bold">
+                    {customer.name?.charAt(0)?.toUpperCase() || "A"}
+                  </span>
+                ) : (
+                  <Icon name="user" className="h-4 w-4" />
+                )}
+              </button>
+              {accountOpen && (
+                <div className="absolute right-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-sm border bg-card text-sm shadow-lg">
+                  <div className="border-b px-3 py-2">
+                    <div className="font-bold">{customer ? customer.name : "Customer Account"}</div>
+                    <div className="truncate text-xs text-muted-foreground">
+                      {customer ? customer.email : "Login or create account"}
+                    </div>
+                  </div>
+                  <Link
+                    to="/account"
+                    search={{ mode: "login" }}
+                    onClick={() => setAccountOpen(false)}
+                    className="block px-3 py-2 hover:bg-secondary hover:text-safety"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/account"
+                    search={{ mode: "create" }}
+                    onClick={() => setAccountOpen(false)}
+                    className="block px-3 py-2 hover:bg-secondary hover:text-safety"
+                  >
+                    Create Account
+                  </Link>
+                  <Link
+                    to="/account"
+                    search={{ mode: "orders" }}
+                    onClick={() => setAccountOpen(false)}
+                    className="block px-3 py-2 hover:bg-secondary hover:text-safety"
+                  >
+                    My Orders
+                  </Link>
+                </div>
+              )}
+            </div>
             <button
               type="button"
               onClick={() => setTheme(nextTheme)}
@@ -250,11 +324,20 @@ export function Header() {
               <div className="grid gap-2 border-t pt-3">
                 <Link
                   to="/saved"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2 rounded-sm border bg-card px-3 py-2"
+            >
+              <Icon name="bookmark" className="h-4 w-4" />
+              Saved Items
+            </Link>
+                <Link
+                  to="/account"
+                  search={{ mode: customer ? "orders" : "login" }}
                   onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-2 rounded-sm border bg-card px-3 py-2"
                 >
-                  <Icon name="bookmark" className="h-4 w-4" />
-                  Saved Items
+                  <Icon name="user" className="h-4 w-4" />
+                  {customer ? "My Orders" : "Login / Create Account"}
                 </Link>
                 <button
                   type="button"

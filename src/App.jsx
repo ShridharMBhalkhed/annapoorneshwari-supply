@@ -42,6 +42,8 @@ const storeReviews = [
 const defaultDescription =
   "Industrial packaging materials supplier for BOPP tapes, films, corrugated boxes, strapping, bubble wrap and bulk packing accessories.";
 const savedItemsKey = "sa_saved_products_v1";
+const customerAccountKey = "sa_customer_account_v1";
+const inquiriesKey = "sa_inquiries_v1";
 const productGalleryImages = {
   "bopp-brown-tape": [
     "https://images.pexels.com/photos/8250941/pexels-photo-8250941.jpeg?auto=compress&cs=tinysrgb&w=1200",
@@ -181,6 +183,32 @@ function writeSavedProductIds(ids) {
   window.dispatchEvent(new CustomEvent("sa:saved-products-changed"));
 }
 
+function readCurrentCustomer() {
+  try {
+    return JSON.parse(window.localStorage.getItem(customerAccountKey) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function writeCurrentCustomer(customer) {
+  window.localStorage.setItem(customerAccountKey, JSON.stringify(customer));
+  window.dispatchEvent(new CustomEvent("sa:account-changed"));
+}
+
+function clearCurrentCustomer() {
+  window.localStorage.removeItem(customerAccountKey);
+  window.dispatchEvent(new CustomEvent("sa:account-changed"));
+}
+
+function readSavedInquiries() {
+  try {
+    return JSON.parse(window.localStorage.getItem(inquiriesKey) || "[]");
+  } catch {
+    return [];
+  }
+}
+
 function getSavedProducts() {
   return readSavedProductIds()
     .map((id) => catalog.products.find((product) => product.id === id))
@@ -265,6 +293,7 @@ function AppRoutes({ pathname, searchParams }) {
   if (pathname === "/catalog") return <CatalogPage searchParams={searchParams} />;
   if (pathname === "/about") return <AboutPage />;
   if (pathname === "/contact") return <ContactPage />;
+  if (pathname === "/account") return <AccountPage searchParams={searchParams} />;
   if (pathname === "/inquiry") return <InquiryPage />;
   if (pathname === "/saved") return <SavedItemsPage />;
   if (pathname.startsWith("/product/")) {
@@ -1170,14 +1199,383 @@ function ContactPage() {
   );
 }
 
+function AccountPage({ searchParams }) {
+  useDocumentTitle("Account - Shree Annapoorneshwari Packaging");
+  const [customer, setCustomer] = useState(() => readCurrentCustomer());
+  const [loginEmail, setLoginEmail] = useState(customer?.email || "");
+  const [pendingOtp, setPendingOtp] = useState("");
+  const [enteredOtp, setEnteredOtp] = useState("");
+  const [notice, setNotice] = useState("");
+  const [createForm, setCreateForm] = useState({
+    name: customer?.name || "",
+    email: customer?.email || "",
+    phone: customer?.phone || "",
+    company: customer?.company || "",
+  });
+  const mode = searchParams.get("mode") || (customer ? "orders" : "login");
+  const inquiries = readSavedInquiries();
+  const customerOrders = customer
+    ? inquiries.filter(
+        (inquiry) => inquiry.email?.toLowerCase() === customer.email?.toLowerCase(),
+      )
+    : [];
+
+  const saveCustomer = (nextCustomer) => {
+    const enrichedCustomer = {
+      ...nextCustomer,
+      name: nextCustomer.name || nextCustomer.email.split("@")[0],
+      joinedAt: nextCustomer.joinedAt || new Date().toISOString(),
+    };
+    writeCurrentCustomer(enrichedCustomer);
+    setCustomer(enrichedCustomer);
+    setNotice("Account ready. Your matching quote requests are shown below.");
+    navigate("/account", { mode: "orders" }, { replace: true });
+  };
+
+  const sendOtp = (event) => {
+    event.preventDefault();
+    if (!loginEmail) return;
+    const nextOtp = String(Math.floor(100000 + Math.random() * 900000));
+    setPendingOtp(nextOtp);
+    setEnteredOtp("");
+    setNotice("Preview OTP generated for this static site.");
+  };
+
+  const verifyOtp = (event) => {
+    event.preventDefault();
+    if (enteredOtp !== pendingOtp) {
+      setNotice("That OTP does not match. Please check the code and try again.");
+      return;
+    }
+
+    const matchingInquiry = inquiries.find(
+      (inquiry) => inquiry.email?.toLowerCase() === loginEmail.toLowerCase(),
+    );
+    saveCustomer({
+      name: matchingInquiry?.name || "",
+      email: loginEmail,
+      phone: matchingInquiry?.phone || "",
+      company: matchingInquiry?.company || "",
+      provider: "Email OTP",
+    });
+  };
+
+  const createAccount = (event) => {
+    event.preventDefault();
+    if (!createForm.name || !createForm.email || !createForm.phone) return;
+    saveCustomer({
+      ...createForm,
+      provider: "Email",
+    });
+  };
+
+  const loginWithGoogle = () => {
+    saveCustomer({
+      name: "Google Customer",
+      email: "google.customer@example.com",
+      phone: "",
+      company: "",
+      provider: "Google",
+    });
+  };
+
+  const logout = () => {
+    clearCurrentCustomer();
+    setCustomer(null);
+    setPendingOtp("");
+    setNotice("You have been signed out.");
+    navigate("/account", { mode: "login" }, { replace: true });
+  };
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1">
+        <div className="border-b bg-steel text-steel-foreground">
+          <div className="container mx-auto px-4 py-10">
+            <div className="text-xs font-bold uppercase tracking-widest text-safety">
+              Customer Account
+            </div>
+            <h1 className="mt-1 text-3xl font-bold md:text-4xl">
+              Login, Create Account & Track Orders
+            </h1>
+            <p className="mt-2 max-w-2xl text-white/70">
+              Keep your quote requests, contact details and reorder history in one place.
+            </p>
+          </div>
+        </div>
+
+        <div className="container mx-auto grid gap-8 px-4 py-10 lg:grid-cols-[280px,1fr]">
+          <aside className="h-fit rounded-sm border bg-card p-4">
+            {customer ? (
+              <div className="border-b pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-safety text-lg font-bold text-safety-foreground">
+                    {customer.name?.charAt(0)?.toUpperCase() || "A"}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="truncate font-bold">{customer.name}</div>
+                    <div className="truncate text-xs text-muted-foreground">{customer.email}</div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="border-b pb-4">
+                <div className="font-bold">Welcome</div>
+                <div className="mt-1 text-sm text-muted-foreground">
+                  Sign in to view your requests.
+                </div>
+              </div>
+            )}
+            <nav className="mt-4 grid gap-2 text-sm font-semibold">
+              <Link
+                to="/account"
+                search={{ mode: "login" }}
+                className={`rounded-sm px-3 py-2 ${
+                  mode === "login" ? "bg-secondary text-safety" : "hover:bg-secondary"
+                }`}
+              >
+                Login
+              </Link>
+              <Link
+                to="/account"
+                search={{ mode: "create" }}
+                className={`rounded-sm px-3 py-2 ${
+                  mode === "create" ? "bg-secondary text-safety" : "hover:bg-secondary"
+                }`}
+              >
+                Create Account
+              </Link>
+              <Link
+                to="/account"
+                search={{ mode: "orders" }}
+                className={`rounded-sm px-3 py-2 ${
+                  mode === "orders" ? "bg-secondary text-safety" : "hover:bg-secondary"
+                }`}
+              >
+                My Orders
+              </Link>
+            </nav>
+            {customer && (
+              <button
+                type="button"
+                onClick={logout}
+                className="mt-4 w-full rounded-sm border px-3 py-2 text-sm font-bold hover:border-safety hover:text-safety"
+              >
+                Sign Out
+              </button>
+            )}
+          </aside>
+
+          <section>
+            {notice && (
+              <div className="mb-4 rounded-sm border bg-card px-4 py-3 text-sm text-muted-foreground">
+                {notice}
+              </div>
+            )}
+
+            {mode === "login" && (
+              <div className="grid gap-6 lg:grid-cols-2">
+                <div className="rounded-sm border bg-card p-6">
+                  <div className="text-xs font-bold uppercase tracking-widest text-safety">
+                    Quick Login
+                  </div>
+                  <h2 className="mt-1 text-2xl font-bold">Continue with Google</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Use your Google identity for a faster checkout and order history.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={loginWithGoogle}
+                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-sm border px-4 py-3 text-sm font-bold uppercase tracking-wider hover:border-safety hover:text-safety"
+                  >
+                    <Icon name="google" className="h-4 w-4" /> Login with Google
+                  </button>
+                </div>
+
+                <form onSubmit={pendingOtp ? verifyOtp : sendOtp} className="rounded-sm border bg-card p-6">
+                  <div className="text-xs font-bold uppercase tracking-widest text-safety">
+                    Email OTP
+                  </div>
+                  <h2 className="mt-1 text-2xl font-bold">Login with Email</h2>
+                  <div className="mt-5 space-y-4">
+                    <Field
+                      label="Email Address *"
+                      type="email"
+                      value={loginEmail}
+                      onChange={setLoginEmail}
+                      required
+                    />
+                    {pendingOtp && (
+                      <>
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                            One-Time Password *
+                          </label>
+                          <input
+                            value={enteredOtp}
+                            onChange={(event) => setEnteredOtp(event.target.value)}
+                            inputMode="numeric"
+                            maxLength={6}
+                            className="mt-1 w-full rounded-sm border px-3 py-2 text-sm outline-none focus:border-safety"
+                          />
+                        </div>
+                        <div className="rounded-sm bg-secondary px-3 py-2 text-xs text-muted-foreground">
+                          Preview OTP: <span className="font-bold text-foreground">{pendingOtp}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  <button
+                    type="submit"
+                    className="mt-5 w-full rounded-sm bg-safety py-3 text-sm font-bold uppercase tracking-wider text-safety-foreground"
+                  >
+                    {pendingOtp ? "Verify & Continue" : "Continue"}
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {mode === "create" && (
+              <form onSubmit={createAccount} className="max-w-2xl rounded-sm border bg-card p-6">
+                <div className="text-xs font-bold uppercase tracking-widest text-safety">
+                  New Customer
+                </div>
+                <h2 className="mt-1 text-2xl font-bold">Create Your Account</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Save your contact details for faster RFQs, pickup coordination and repeat orders.
+                </p>
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                  <Field
+                    label="Full Name *"
+                    value={createForm.name}
+                    onChange={(value) => setCreateForm({ ...createForm, name: value })}
+                    required
+                  />
+                  <Field
+                    label="Mobile Number *"
+                    value={createForm.phone}
+                    onChange={(value) => setCreateForm({ ...createForm, phone: value })}
+                    required
+                  />
+                  <Field
+                    label="Email Address *"
+                    type="email"
+                    value={createForm.email}
+                    onChange={(value) => setCreateForm({ ...createForm, email: value })}
+                    required
+                  />
+                  <Field
+                    label="Company"
+                    value={createForm.company}
+                    onChange={(value) => setCreateForm({ ...createForm, company: value })}
+                  />
+                </div>
+                <div className="mt-5 grid gap-3 rounded-sm bg-secondary/50 p-4 text-sm md:grid-cols-3">
+                  <div>
+                    <div className="font-bold">Fast RFQ</div>
+                    <div className="mt-1 text-muted-foreground">Details prefilled for new quote requests.</div>
+                  </div>
+                  <div>
+                    <div className="font-bold">Order History</div>
+                    <div className="mt-1 text-muted-foreground">See matching inquiries by email.</div>
+                  </div>
+                  <div>
+                    <div className="font-bold">Easy Reorder</div>
+                    <div className="mt-1 text-muted-foreground">Review quantities and product names quickly.</div>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="mt-5 rounded-sm bg-safety px-5 py-3 text-sm font-bold uppercase tracking-wider text-safety-foreground"
+                >
+                  Create Account
+                </button>
+              </form>
+            )}
+
+            {mode === "orders" && (
+              <div className="rounded-sm border bg-card p-6">
+                <div className="flex flex-col gap-3 border-b pb-4 md:flex-row md:items-end md:justify-between">
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-safety">
+                      My Orders
+                    </div>
+                    <h2 className="mt-1 text-2xl font-bold">Quote Request History</h2>
+                  </div>
+                  <Link
+                    to="/catalog"
+                    className="inline-flex items-center gap-2 rounded-sm bg-safety px-4 py-2 text-sm font-bold uppercase tracking-wider text-safety-foreground"
+                  >
+                    New Quote <Icon name="arrowRight" className="h-4 w-4" />
+                  </Link>
+                </div>
+                {!customer ? (
+                  <div className="py-10 text-center">
+                    <Icon name="user" className="mx-auto h-10 w-10 text-muted-foreground" />
+                    <div className="mt-3 font-semibold">Login to view your orders</div>
+                    <Link
+                      to="/account"
+                      search={{ mode: "login" }}
+                      className="mt-4 inline-flex rounded-sm bg-safety px-4 py-2 text-sm font-bold uppercase tracking-wider text-safety-foreground"
+                    >
+                      Login
+                    </Link>
+                  </div>
+                ) : customerOrders.length === 0 ? (
+                  <div className="py-10 text-center">
+                    <Icon name="fileText" className="mx-auto h-10 w-10 text-muted-foreground" />
+                    <div className="mt-3 font-semibold">No quote requests yet</div>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Requests submitted with {customer.email} will appear here.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-5 grid gap-4">
+                    {customerOrders.map((order, index) => (
+                      <article key={`${order.createdAt}-${index}`} className="rounded-sm border p-4">
+                        <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                          <div>
+                            <div className="font-bold">Quote #{customerOrders.length - index}</div>
+                            <div className="mt-1 text-xs text-muted-foreground">
+                              {new Date(order.createdAt).toLocaleString()}
+                            </div>
+                          </div>
+                          <div className="rounded-sm bg-secondary px-3 py-1 text-xs font-bold uppercase text-muted-foreground">
+                            Submitted
+                          </div>
+                        </div>
+                        <ul className="mt-4 divide-y rounded-sm border text-sm">
+                          {order.items.map((item) => (
+                            <li key={item.productId} className="flex justify-between gap-3 px-3 py-2">
+                              <span className="font-medium">{item.name}</span>
+                              <span className="shrink-0 text-muted-foreground">Qty: {item.quantity}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 function InquiryPage() {
   useDocumentTitle("Request a Quote - Shree Annapoorneshwari Packaging");
   const cart = useInquiryCart();
+  const currentCustomer = readCurrentCustomer();
   const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    company: "",
+    name: currentCustomer?.name || "",
+    email: currentCustomer?.email || "",
+    phone: currentCustomer?.phone || "",
+    company: currentCustomer?.company || "",
     address: "",
     message: "",
   });
@@ -1196,8 +1594,8 @@ function InquiryPage() {
       createdAt: new Date().toISOString(),
     };
 
-    const saved = JSON.parse(window.localStorage.getItem("sa_inquiries_v1") || "[]");
-    window.localStorage.setItem("sa_inquiries_v1", JSON.stringify([inquiry, ...saved]));
+    const saved = readSavedInquiries();
+    window.localStorage.setItem(inquiriesKey, JSON.stringify([inquiry, ...saved]));
     window.open(
       `https://wa.me/919945662206?text=${encodeURIComponent(createWhatsAppInquiryMessage(inquiry))}`,
       "_blank",
