@@ -2216,8 +2216,8 @@ function SaveButton({ isSaved, onClick, className = "", label = "Save item" }) {
         event.currentTarget.blur();
         onClick?.();
       }}
-      className={`${className} inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/90 text-steel shadow-sm backdrop-blur transition hover:bg-safety hover:text-safety-foreground focus:outline-none focus:ring-0 ${
-        isSaved ? "bg-safety text-safety-foreground" : ""
+      className={`${className} inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/90 text-steel shadow-sm backdrop-blur transition hover:border-safety hover:bg-white hover:text-safety focus:outline-none focus:ring-0 ${
+        isSaved ? "border-safety bg-white/95 text-safety" : ""
       }`}
       aria-label={label}
       title={isSaved ? "Saved" : "Save"}
