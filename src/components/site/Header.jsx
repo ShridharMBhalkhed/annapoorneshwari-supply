@@ -79,7 +79,7 @@ export function Header() {
 
   return (
     <>
-      <div className="bg-steel text-steel-foreground text-xs">
+      <div className="site-topbar text-steel-foreground text-xs">
         <div className="container mx-auto flex items-center justify-between gap-3 px-4 py-2">
           <a href="tel:+919945662206" className="flex items-center gap-1.5 hover:text-safety">
             <Icon name="phone" className="h-3 w-3" /> +91 99456 62206
@@ -89,7 +89,7 @@ export function Header() {
           </span>
         </div>
       </div>
-      <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur relative">
+      <header className="site-header-shell sticky top-0 z-40 border-b backdrop-blur relative">
         <div className="container mx-auto flex items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4 sm:py-4">
           <Link
             to="/"

@@ -2,10 +2,15 @@ import { Link } from "../Link.jsx";
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t bg-steel text-steel-foreground">
+    <footer className="site-footer mt-24 border-t text-steel-foreground">
       <div className="h-1.5 industrial-stripe" />
       <div className="container mx-auto grid gap-10 px-4 py-12 md:grid-cols-4">
         <div>
+          <img
+            src="/logo-removebg-preview.png"
+            alt="Shree Annapoorneshwari Packaging logo"
+            className="mb-4 h-24 w-24 object-contain"
+          />
           <div className="text-lg font-bold">Shree Annapoorneshwari Packaging</div>
           <p className="mt-3 text-sm text-white/70">
             All types of packaging materials supplier - serving manufacturers, exporters and
